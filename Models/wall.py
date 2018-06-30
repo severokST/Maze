@@ -1,8 +1,7 @@
 from pyglet import image, sprite, graphics, gl
 
-
+x_y = [0,1]
 images = [image.load('./images/wall.png')]
-
 time_scale = 1
 
 
@@ -15,15 +14,21 @@ class Wall:
 
 # V0 - Read though all avalaible nodes and connection references. Place walls where ever no connection exists
 #   Todo: All walls appear to be genrated -90 degrees from correct orientation. Investigate and fix.
+#       Appears to be due to Pyglet co-ordinates originating Lower-left instead of upper left.
+#   Todo: Re-check logic for Y-axis references. Likely applying incorrect neighbour link flags.
 
 def generate_walls(UI, map_nodes):
     map_walls = []
-    grid_resolution = UI['Field']['size'][0] / UI['grid_size'][0], UI['Field']['size'][1] / UI['grid_size'][1]
-    position_offset = grid_resolution[0]/6, grid_resolution[1]/6
+
+    grid_resolution = tuple(map(lambda x: UI['Field']['size'][x] / UI['grid_size'][x], x_y))
+    position_offset = tuple(map(lambda x: grid_resolution[x]/6, x_y))
+
     for node in map_nodes:
         print (node, map_nodes[node].links)
-        node_position = UI['Field']['position'][0] + map_nodes[node].position[0] * grid_resolution[0], \
-                        UI['Field']['position'][1] + map_nodes[node].position[1] * grid_resolution[1]
+
+        node_position = tuple(map(lambda x: UI['Field']['position'][x] +
+                                            map_nodes[node].position[x] * grid_resolution[x], x_y))
+
         if 'up' not in map_nodes[node].links:
             map_walls.append(Wall(UI, (node_position[0], node_position[1] + position_offset[1])))
         if 'down' not in map_nodes[node].links:

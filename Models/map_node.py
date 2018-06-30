@@ -1,5 +1,7 @@
 from random import choice, randint
 
+x_y = [0,1]
+
 
 class MapNode:
     def __init__(self, position):
@@ -30,8 +32,7 @@ class MapNode:
             return
 
         # Calculate key for new room by modifying existing, Offset drawn from earlier dictionary selected by choice
-        new_position = self.position[0]+new_position_list[direction]['pos'][0], \
-                       self.position[1]+new_position_list[direction]['pos'][1]
+        new_position = tuple(map(lambda x: self.position[x] + new_position_list[direction]['pos'][x], x_y))
 
         # Check key does not violate map boundaries, escape if does.
         if  new_position[0] <= 0 or new_position[1] <= 0 or \
@@ -89,7 +90,7 @@ class MapNode:
 
 
 def new_map(room_count, grid_size):
-    start_position = grid_size[0] / 2, grid_size[1] / 2
+    start_position = tuple(map(lambda x: int(grid_size[x] / 2), x_y))
     map_nodes = {}
     map_nodes[start_position] = MapNode(start_position)
     while len(map_nodes)<room_count:
