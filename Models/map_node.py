@@ -1,6 +1,6 @@
 from random import choice, randint
 
-x_y = [0,1]
+x_y = [0, 1]
 
 
 class MapNode:
@@ -16,13 +16,14 @@ class MapNode:
 
     def add_room(self, map_list, grid_size):
         # Return if room is already well connected (Attempting to avoid saturation of open spaces)
-        if len(self.links)>=3: return
+        if len(self.links) >= 3:
+            return
 
         # Define directions in terms of useful information (Offset of neighbour in that direction, name of reverse
-        new_position_list = {'up': {'pos': (-1,0), 'rev': 'down'},
-                             'down': {'pos': (1,0), 'rev': 'up'},
-                             'left': {'pos': (0,-1), 'rev': 'right'},
-                             'right': {'pos': (0,1), 'rev': 'left'}}
+        new_position_list = {'up': {'pos': (0, 1), 'rev': 'down'},
+                             'down': {'pos': (0, -1), 'rev': 'up'},
+                             'left': {'pos': (-1, 0), 'rev': 'right'},
+                             'right': {'pos': (1, 0), 'rev': 'left'}}
 
         # Choose direction of new connection
         direction = choice(list(new_position_list))
@@ -35,8 +36,10 @@ class MapNode:
         new_position = tuple(map(lambda x: self.position[x] + new_position_list[direction]['pos'][x], x_y))
 
         # Check key does not violate map boundaries, escape if does.
-        if  new_position[0] <= 0 or new_position[1] <= 0 or \
-            new_position[0] >= grid_size[0] or new_position[0] >= grid_size[1]:
+        if new_position[0] <= 0 or \
+                new_position[1] <= 0 or \
+                new_position[0] >= grid_size[0] or \
+                new_position[1] >= grid_size[1]:
             return
 
         # Check if room exists in target direction, Create if not.
@@ -57,7 +60,7 @@ class MapNode:
 
     def open_area(self, map_list):
         # Select test target - Node in position X+1, Y+1
-        neighbour_key = self.position[0]+1, self.position[1]+1
+        neighbour_key = self.position[0]+1, self.position[1]-1
         # Check test target exists - Failure = No need to continue
         try:
             test = map_list[neighbour_key]
@@ -75,7 +78,7 @@ class MapNode:
             # Connect Bottom right - Top left
             map_list[neighbour_key].links.add('up-left')
             # Connect Bottom left - Top right
-            map_list[self.position[0], self.position[1]+1].links.add('up-right')
+            map_list[self.position[0], self.position[1]-1].links.add('up-right')
             # Connect Top-right - Bottom left
             map_list[self.position[0]+1, self.position[1]].links.add('down-left')
 

@@ -21,7 +21,7 @@ def generate_walls(UI, map_nodes):
     map_walls = []
 
     grid_resolution = tuple(map(lambda x: UI['Field']['size'][x] / UI['grid_size'][x], x_y))
-    position_offset = tuple(map(lambda x: grid_resolution[x]/6, x_y))
+    position_offset = tuple(map(lambda x: grid_resolution[x]/3, x_y))
 
     for node in map_nodes:
         print (node, map_nodes[node].links)
@@ -42,7 +42,7 @@ def generate_walls(UI, map_nodes):
         if 'up-right' not in map_nodes[node].links:
             map_walls.append(Wall(UI, (node_position[0] + position_offset[0], node_position[1] + position_offset[1])))
         if 'down-left' not in map_nodes[node].links:
-            map_walls.append(Wall(UI, (node_position[0] - position_offset[0], node_position[1]- position_offset[1])))
+            map_walls.append(Wall(UI, (node_position[0] - position_offset[0], node_position[1] - position_offset[1])))
         if 'down-right' not in map_nodes[node].links:
             map_walls.append(Wall(UI, (node_position[0] + position_offset[0], node_position[1] - position_offset[1])))
 
