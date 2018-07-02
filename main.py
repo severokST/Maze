@@ -40,8 +40,8 @@ def on_draw():
 
 
 def update(dt):
-    player.key(keys, map_nodes)
-    player.update(UI)
+    player.key(keys, map_nodes, UI)
+    player.update()
     for obj in object_list:
         pass
 
