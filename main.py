@@ -1,19 +1,10 @@
+from config import UI
 from pyglet import window, app, graphics, clock, gl
 from pyglet.window import key
-from Models import map_node, wall, actor
+from Models import map_node, wall, actor, player, enemy
 from random import choice
-import random
 
 
-UI = {
-        'Main': {'size': [800, 600],   'position': [0, 0]},
-        'Field': {'size': [700, 500],  'position': [50, 50]},
-        'grid_size': [35,25],
-        'batch_actors': graphics.Batch(),
-        'batch_map': graphics.Batch(),
-        'foreground': graphics.OrderedGroup(1),
-        'background': graphics.OrderedGroup(2)
-}
 
 
 main_window = window.Window(width=UI['Main']['size'][0], height=UI['Main']['size'][1])
@@ -21,10 +12,20 @@ main_window = window.Window(width=UI['Main']['size'][0], height=UI['Main']['size
 keys = key.KeyStateHandler()
 main_window.push_handlers(keys)
 
-map_nodes = map_node.new_map(200, UI['grid_size'])
-map_objects = wall.generate_walls(UI, map_nodes)
-player = actor.PC(UI, choice(list(map_nodes)))
+map_nodes = map_node.new_map(200)
+map_objects = wall.generate_walls(map_nodes)
+player = player.PC(choice(list(map_nodes)))
+
+
+
 object_list = []
+npc_list = []
+
+for i in range(0, 3):
+    npc_list.append(enemy.Enemy(choice(list(map_nodes))))
+
+
+
 
 @main_window.event
 def on_draw():
@@ -40,10 +41,11 @@ def on_draw():
 
 
 def update(dt):
-    player.key(keys, map_nodes, UI)
+    player.key(keys, map_nodes)
     player.update()
-    for obj in object_list:
-        pass
+    for enemy in npc_list:
+        enemy.decision(player, map_nodes)
+        enemy.update()
 
 
 

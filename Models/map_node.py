@@ -1,4 +1,5 @@
 from random import choice, randint
+from config import UI
 
 x_y = [0, 1]
 
@@ -14,7 +15,8 @@ class MapNode:
     # V1 - Pick random grid location 1 space away, check if room already exists, add if not.
     #    - Add references to room objects to indicate connections (IE, linked list)
 
-    def add_room(self, map_list, grid_size):
+    def add_room(self, map_nodes):
+        grid_size = UI['grid_size']
         # Return if room is already well connected (Attempting to avoid saturation of open spaces)
         if len(self.links) >= 3:
             return
@@ -44,14 +46,14 @@ class MapNode:
 
         # Check if room exists in target direction, Create if not.
         try:
-            test = map_list[new_position]
+            test = map_nodes[new_position]
         except KeyError:
-            map_list[new_position] = MapNode(new_position)
+            map_nodes[new_position] = MapNode(new_position)
 
         # Add reference, linking neighbouring room to this (Reference from chice), and assign matching reference to
         # target (Matching reference supplied by dictionary referenced by choice)
         self.links.add(direction)
-        map_list[new_position].links.add(new_position_list[direction]['rev'])
+        map_nodes[new_position].links.add(new_position_list[direction]['rev'])
 
 
     # V0 - Detect condition of node being Top-Left corner of a fully connected square.
@@ -92,12 +94,13 @@ class MapNode:
     #       if successful add corner links
 
 
-def new_map(room_count, grid_size):
+def new_map(room_count):
+    grid_size = UI['grid_size']
     start_position = tuple(map(lambda x: int(grid_size[x] / 2), x_y))
     map_nodes = {}
     map_nodes[start_position] = MapNode(start_position)
     while len(map_nodes)<room_count:
-        map_nodes[choice(list(map_nodes))].add_room(map_nodes, grid_size)
+        map_nodes[choice(list(map_nodes))].add_room(map_nodes)
 
     for node in map_nodes:
         map_nodes[node].open_area(map_nodes)

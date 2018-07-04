@@ -1,6 +1,7 @@
 from pyglet import image, sprite, graphics, gl
+from config import UI
 
-x_y = [0,1]
+x_y = [0, 1]
 images = [image.load('./images/wall.png')]
 time_scale = 1
 
@@ -9,7 +10,7 @@ class Wall:
     def __init__(self, ui, position):
         self.position = position
         self.sprite = sprite.Sprite(images[0], batch=ui['batch_map'], group=ui['background'],
-                                x=self.position[0], y=self.position[1])
+                                    x=self.position[0], y=self.position[1])
 
 
 # V0 - Read though all avalaible nodes and connection references. Place walls where ever no connection exists
@@ -17,7 +18,7 @@ class Wall:
 #       Appears to be due to Pyglet co-ordinates originating Lower-left instead of upper left.
 #   Todo: Re-check logic for Y-axis references. Likely applying incorrect neighbour link flags.
 
-def generate_walls(UI, map_nodes):
+def generate_walls(map_nodes):
     map_walls = []
 
     grid_resolution = tuple(map(lambda x: UI['Field']['size'][x] / UI['grid_size'][x], x_y))
@@ -47,3 +48,4 @@ def generate_walls(UI, map_nodes):
             map_walls.append(Wall(UI, (node_position[0] + position_offset[0], node_position[1] - position_offset[1])))
 
     return map_walls
+
