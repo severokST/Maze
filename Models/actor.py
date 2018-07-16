@@ -7,7 +7,9 @@ x_y = [0, 1]
 # Generic actor class, simple moveable object in maz
 images = {'Generic': image.load('./images/generic.png'),
           'Player': image.load('./images/player.png'),
-          'Enemy': image.load('./images/enemy.png'),}
+          'Enemy': image.load('./images/enemy.png'),
+          'Key': image.load('./images/key.png'),
+          'Door': image.load('./images/door.png'),}
 
 
 class Actor:

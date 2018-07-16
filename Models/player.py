@@ -8,7 +8,10 @@ class PC(actor.Actor):
         actor.Actor.__init__(self, position)
         self.speed = 2
         self.sprite.image = images['Player']
-        self.inv = ()
+        self.inv = set()
+
+    def __del__(self):
+        self.sprite.delete()
 
     def die(self):
         print('Splat')
