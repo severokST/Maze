@@ -7,7 +7,7 @@ from Models.actor import images
 class Enemy(actor.Actor):
     def __init__(self, position):
         actor.Actor.__init__(self, position)
-        self.speed = 2
+        self.speed = 1.5
         self.sprite.image = images['Enemy']
 
     def path_find_player(self, player, map_nodes):
@@ -18,7 +18,7 @@ class Enemy(actor.Actor):
         for initial in map_nodes[self.position].links:
             if initial in next_location.keys():
                 connecting_location = (self.position[0] + next_location[initial][0], self.position[1] + next_location[initial][1])
-                if connecting_location == player.position:
+                if connecting_location == player.target_position:
                     return initial
                 check_list.append({'initial_direction': initial, 'location':connecting_location, 'distance': 1})
                 checked_node.add(self.position)
@@ -58,11 +58,11 @@ class Enemy(actor.Actor):
                                         pow(dy, 2)))
 
         if distance_from_player < 2:
-            player.die()
+            return 'hit'
 
         if self.position == self.target_position:
             direction_choice = 'none'
-            if distance_from_player_grid < 5:
+            if distance_from_player_grid < 3:
                 direction_choice = self.path_find_player(player, map_nodes)
 
             if direction_choice == 'none':

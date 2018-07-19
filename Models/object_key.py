@@ -12,6 +12,5 @@ class key(actor.Actor):
     def collision(self, player):
         if player.position == self.position:
             player.inv.add('key')
-            print('player inv:', player.inv)
-            return 1
+            return 'item_get'
         return 0

@@ -25,7 +25,6 @@ def generate_walls(map_nodes):
     position_offset = tuple(map(lambda x: grid_resolution[x]/3, x_y))
 
     for node in map_nodes:
-        print (node, map_nodes[node].links)
 
         node_position = tuple(map(lambda x: UI['Field']['position'][x] +
                                             map_nodes[node].position[x] * grid_resolution[x], x_y))

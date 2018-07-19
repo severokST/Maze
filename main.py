@@ -4,34 +4,56 @@ from pyglet.window import key
 from Models import map_node, wall, actor, player, enemy, object_key, object_door
 from random import choice
 
-
-
-
 main_window = window.Window(width=UI['Main']['size'][0], height=UI['Main']['size'][1])
 
 keys = key.KeyStateHandler()
 main_window.push_handlers(keys)
 
-map_nodes = map_node.new_map(200)
-map_objects = wall.generate_walls(map_nodes)
-player = player.PC(choice(list(map_nodes)))
 
+class Level:
+    def __init__(self):
+        self.level = 1
+        self.player = None
+        self.map_nodes = {}
+        self.object_list = []
+        self.npc_list = []
+        self.map_objects = []
+        self.generate_level()
 
+    def level_up(self):
+        self.level +=1
+        self.generate_level()
 
-object_list = []
-npc_list = []
+    def restart(self):
+        self.level = 0
+        self.generate_level()
 
-for i in range(0, 3):
-    npc_list.append(enemy.Enemy(choice(list(map_nodes))))
+    def clean_up(self):
+        self.map_nodes.clear()
+        self.object_list.clear()
+        self.npc_list.clear()
+        self.map_objects.clear()
 
-object_list.append(object_key.key(choice(list(map_nodes))))
+    def generate_level(self):
+        self.clean_up()
+        tile_count = 50 + self.level * 10
+        enemy_count = int(self.level) + 1
+        self.map_nodes = map_node.new_map(tile_count)
+        self.map_objects = wall.generate_walls(self.map_nodes)
 
-for attempts in range(0,100):
-    potential_exit = map_nodes[choice(list(map_nodes))]
-    if len(potential_exit.links) == 1 or attempts == 100:
-        object_list.append(object_door.door(potential_exit.position))
-        break
+        for count in range(0, enemy_count):
+            self.npc_list.append(enemy.Enemy(choice(list(self.map_nodes))))
 
+        self.object_list.append(object_key.key(choice(list(self.map_nodes))))
+        self.player = player.PC(choice(list(self.map_nodes)))
+
+        print(self.player.position)
+
+        for attempts in range(0, 100):
+            potential_exit = self.map_nodes[choice(list(self.map_nodes))]
+            if len(potential_exit.links) == 1 or attempts == 100:
+                self.object_list.append(object_door.door(potential_exit.position))
+                break
 
 @main_window.event
 def on_draw():
@@ -47,19 +69,22 @@ def on_draw():
 
 
 def update(dt):
-    player.key(keys, map_nodes)
-    player.update()
-    for enemy in npc_list:
-        enemy.decision(player, map_nodes)
-        enemy.update()
-    for item in range(0, len(object_list)):
-        if object_list[item].collision(player) == 1:
-            del object_list[item]
+        level.player.key(keys, level.map_nodes)
+        level.player.update()
+        for enemy in level.npc_list:
+            if enemy.decision(level.player, level.map_nodes) == 'hit':
+                print('Hit')
+                level.restart()
+            enemy.update()
+        for item in range(len(level.object_list)-1,-1,-1):
+            event = level.object_list[item].collision(level.player)
+            if event == 'item_get':
+                del level.object_list[item]
+            if event == 'use_door':
+                level.level_up()
 
 
-
-
-
+level = Level()
 
 clock.schedule_interval(update,1/30);
 
